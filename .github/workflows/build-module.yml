@@ -1,0 +1,26 @@
+name: Build NetProxy Module Zip
+
+on:
+  workflow_dispatch: # 允许网页手动点击触发打包
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 拉取源码
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # 如果包含子模块一同拉取
+
+      - name: 打包 Magisk 模块 ZIP
+        run: |
+          mkdir -p output
+          # 排除 git 相关元数据与 github 配置，打包根目录所有文件
+          zip -r output/NetProxy-Magisk-Module.zip . -x "*.git*" ".github/*" "README.md" "LICENSE"
+
+      - name: 上传构建结果
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetProxy-Magisk-Zip
+          path: output/NetProxy-Magisk-Module.zip
